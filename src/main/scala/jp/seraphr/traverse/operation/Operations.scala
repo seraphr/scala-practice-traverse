@@ -9,7 +9,7 @@ import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.typeclass.Monoid
 
 object Operations {
-  def countElements[F[_]: Applicative, T[_]: CanTraversable, A](aData: T[A]): Int = {
+  def countElements[T[_]: CanTraversable, A](aData: T[A]): Int = {
     import MonoidInstances.IntMonoid
     import ApplicativeInstances.monoidContainerApplicative
     val tTraversable = implicitly[CanTraversable[T]]
@@ -18,7 +18,7 @@ object Operations {
     tTraversable.traverse[({type C[E] = Container[Int, E]})#C, A, Any](f)(aData).value
   }
 
-  def sumElements[F[_]: Applicative, T[_]: CanTraversable](aData: T[Int]): Int = {
+  def sumElements[T[_]: CanTraversable](aData: T[Int]): Int = {
     import ApplicativeInstances.IntContainerApplicative
     val tTraversable = implicitly[CanTraversable[T]]
 
@@ -26,7 +26,7 @@ object Operations {
     tTraversable.traverse(f)(aData).value
   }
 
-  def appendElements[F[_]: Applicative, T[_]: CanTraversable, A: Monoid](aData: T[A]): A = {
+  def appendElements[T[_]: CanTraversable, A: Monoid](aData: T[A]): A = {
     import ApplicativeInstances.monoidContainerApplicative
     val tTraversable = implicitly[CanTraversable[T]]
 
