@@ -1,11 +1,11 @@
 package jp.seraphr.traverse.typeclass
 
-trait CanTraversable[T[_]] {
+trait CanTraverse[T[_]] {
   def traverse[F[_]: Applicative, A, B](f: A => F[B])(aTraversable: T[A]): F[T[B]]
 }
 
 object TraversableInstances {
-  implicit object ListTraversable extends CanTraversable[List] {
+  implicit object ListTraversable extends CanTraverse[List] {
     def cons[A] = (aHead: A) => (aList: List[A]) => aHead :: aList
 
     override def traverse[F[_]: Applicative, A, B](f: A => F[B])(aTraversable: List[A]): F[List[B]] = {
