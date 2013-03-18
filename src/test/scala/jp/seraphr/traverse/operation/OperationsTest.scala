@@ -57,6 +57,45 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
 
     testList[String]
     testList[Int]
+    testList[List[Int]]
+    testList[(String, Int)]
+  }
+
+  test("map with List") {
+    import TraversableInstances.ListTraversable
+
+    def testList[T](implicit ev: Arbitrary[List[T]]): Unit = {
+      check { aList: List[T] =>
+        {
+          assert(Operations.map((_: T).toString)(aList) === aList.map(_.toString()))
+          true
+        }
+      }
+    }
+
+    testList[String]
+    testList[Int]
+    testList[Double]
+    testList[Char]
+    testList[(String, Int)]
+  }
+
+  test("map with MonoidList") {
+    import TraversableInstances.ListTraversable
+    import MonoidInstances._
+
+    def testList[T](implicit ev: Arbitrary[List[T]], ev2: Monoid[T]): Unit = {
+      check { aList: List[T] =>
+        {
+          val tMonoid = ev2
+          assert(Operations.map((e: T) => tMonoid.append(e, e))(aList) === aList.map((e: T) => tMonoid.append(e, e)))
+          true
+        }
+      }
+    }
+
+    testList[String]
+    testList[Int]
     testList[(String, Int)]
   }
 }

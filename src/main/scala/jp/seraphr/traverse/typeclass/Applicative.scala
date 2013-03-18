@@ -1,6 +1,7 @@
 package jp.seraphr.traverse.typeclass
 import jp.seraphr.traverse.data.IntContainer
 import jp.seraphr.traverse.data.Container
+import jp.seraphr.traverse.data.Ident
 
 trait Functor[F[_]] {
   def fmap[A, B](f: A => B)(aFunctor: F[A]): F[B]
@@ -43,5 +44,16 @@ object ApplicativeInstances {
     }
 
     override def fmap[A, B](f: A => B)(aFunctor: Container[E, A]) = Container[E, B](aFunctor.value)
+  }
+
+  implicit object IdentApplicative extends Applicative[Ident] {
+    override def point[A](a: => A) = Ident(a)
+    override def apply[A, B](f: Ident[A => B])(aFunctor: Ident[A]): Ident[B] = {
+      val tF = f.value
+      val tValue = aFunctor.value
+
+      point(tF(tValue))
+    }
+    override def fmap[A, B](f: A => B)(aFunctor: Ident[A]) = Ident(f(aFunctor.value))
   }
 }
