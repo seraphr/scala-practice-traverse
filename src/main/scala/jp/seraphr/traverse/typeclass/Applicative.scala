@@ -2,6 +2,7 @@ package jp.seraphr.traverse.typeclass
 import jp.seraphr.traverse.data.IntContainer
 import jp.seraphr.traverse.data.Container
 import jp.seraphr.traverse.data.Ident
+import jp.seraphr.traverse.data.Product
 
 trait Functor[F[_]] {
   def fmap[A, B](f: A => B)(aFunctor: F[A]): F[B]
@@ -55,5 +56,34 @@ object ApplicativeInstances {
       point(tF(tValue))
     }
     override def fmap[A, B](f: A => B)(aFunctor: Ident[A]) = Ident(f(aFunctor.value))
+  }
+
+  implicit def applicativeProductAplicative[F1[_]: Applicative, F2[_]: Applicative]: Applicative[({ type P[A] = Product[F1, F2, A] })#P] = new Applicative[({ type P[A] = Product[F1, F2, A] })#P] {
+    private val mApp1 = implicitly[Applicative[F1]]
+    private val mApp2 = implicitly[Applicative[F2]]
+
+    override def point[A](a: => A) = Product(mApp1.point(a), mApp2.point(a))
+
+    override def apply[A, B](f: Product[F1, F2, A => B])(aFunctor: Product[F1, F2, A]) = {
+      val tLeftF = f.l
+      val tRightF = f.r
+      val tLeftFunctor = aFunctor.l
+      val tRightFunctor = aFunctor.r
+
+      val tLeftApplied = mApp1.apply(tLeftF)(tLeftFunctor)
+      val tRightApplied = mApp2.apply(tRightF)(tRightFunctor)
+
+      Product(tLeftApplied, tRightApplied)
+    }
+
+    override def fmap[A, B](f: A => B)(aFunctor: Product[F1, F2, A]): Product[F1, F2, B] = {
+      val tLeftFunctor = aFunctor.l
+      val tRightFunctor = aFunctor.r
+
+      val tLeftMapped = mApp1.fmap(f)(tLeftFunctor)
+      val tRightMapped = mApp2.fmap(f)(tRightFunctor)
+
+      Product(tLeftMapped, tRightMapped)
+    }
   }
 }

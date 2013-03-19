@@ -41,6 +41,17 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
     }
   }
 
+  test("sumAndSumElements with List") {
+    import TraversableInstances.ListTraversable
+
+    check { (aList: List[Int]) =>
+      {
+        assert(Operations.sumAndSumElements(aList) === (aList.sum, aList.sum))
+        true
+      }
+    }
+  }
+
   test("append Elements with List") {
     import TraversableInstances.ListTraversable
     import MonoidInstances._
@@ -50,6 +61,28 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
         {
           val tMonoid = ev2
           assert(Operations.appendElements(aList) === aList.fold(ev2.zero)(ev2.append(_, _)))
+          true
+        }
+      }
+    }
+
+    testList[String]
+    testList[Int]
+    testList[List[Int]]
+    testList[(String, Int)]
+  }
+
+  test("countAndAppendElements with List") {
+    import TraversableInstances.ListTraversable
+    import MonoidInstances._
+
+    def testList[T](implicit ev: Arbitrary[List[T]], ev2: Monoid[T]): Unit = {
+      check { aList: List[T] =>
+        {
+          val tMonoid = ev2
+          val (tCount, tAppend) = Operations.countAndAppendElements(aList)
+          assert(tCount === aList.size)
+          assert(tAppend === aList.fold(ev2.zero)(ev2.append(_, _)))
           true
         }
       }
