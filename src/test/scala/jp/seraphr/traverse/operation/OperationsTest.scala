@@ -30,6 +30,17 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
     testList[(String, Int)]
   }
 
+  test("count Elements with List of List") {
+    import TraversableInstances.ListTraversable
+    import TraversableInstances.nestedTraversable
+
+    val tListList = List(List(1, 2), List(3, 4, 5), List(6, 7))
+
+    // こういう型注釈しないと、Traversableの中身がTraversableという場合には対応できない
+    // 型注釈なしでは、3が返る。　残念
+    assert(Operations.countElements[({type LL[E] = List[List[E]]})#LL, Int](tListList) === 7)
+  }
+
   test("sumElements with List") {
     import TraversableInstances.ListTraversable
 
@@ -147,6 +158,25 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
 
     testList[String]
     testList[Int]
+    testList[(String, Int)]
+  }
+
+  test("shape with List") {
+    import TraversableInstances.ListTraversable
+
+    def testList[T](implicit ev: Arbitrary[List[T]]): Unit = {
+      check { aList: List[T] =>
+        {
+          assert(Operations.shape(aList) === aList.map(_ => ()))
+          true
+        }
+      }
+    }
+
+    testList[String]
+    testList[Int]
+    testList[Double]
+    testList[Char]
     testList[(String, Int)]
   }
 }

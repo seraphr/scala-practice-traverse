@@ -20,4 +20,18 @@ object TraversableInstances {
       }
     }
   }
+
+  implicit def nestedTraversable[Outer[_]: CanTraverse, Inner[_]: CanTraverse] = new CanTraverse[({ type N[E] = Outer[Inner[E]] })#N] {
+    override def traverse[F[_]: Applicative, A, B](f: A => F[B])(aTraversable: Outer[Inner[A]]): F[Outer[Inner[B]]] = {
+      val tApp = implicitly[Applicative[F]]
+      val tOuterTraversable = implicitly[CanTraverse[Outer]]
+      val tInnerTraversable = implicitly[CanTraverse[Inner]]
+
+      val tFunc = (aInner: Inner[A]) => {
+          tInnerTraversable.traverse(f)(aInner)
+      }
+
+      tOuterTraversable.traverse(tFunc)(aTraversable)
+    }
+  }
 }
