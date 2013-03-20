@@ -6,9 +6,9 @@ scalaVersion := "2.9.2"
 
 organization := "seraph"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.1" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.9" % "test"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0" % "test"
 
-EclipseKeys.withSource := true
+// EclipseKeys.withSource := true
 
