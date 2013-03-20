@@ -38,6 +38,7 @@ object Operations {
   def appendFunc[A] = (a: A) => Container[A, Unit](a)
   def mapFunc[A, B](f: A => B) = (a: A) => Ident(f(a))
   def contentFunc[A] = (a: A) => Container[List[A], Unit](List(a))
+  def shapeMapper[A] = (_: A) => ()
 
   def sumElements[T[_]: CanTraverse](aData: T[Int]): Int = {
     import ApplicativeInstances.IntContainerApplicative
@@ -87,6 +88,10 @@ object Operations {
     import ApplicativeInstances.monoidContainerApplicative
 
     traverse[T, ({ type C[E] = Container[List[A], E] })#C, A, Unit](contentFunc[A])(aData).value
+  }
+
+  def shape[T[_]: CanTraverse, A](aData: T[A]): T[Unit] = {
+    map(shapeMapper[A])(aData)
   }
 
   def map[T[_]: CanTraverse, A, B](f: A => B)(aData: T[A]): T[B] = {
