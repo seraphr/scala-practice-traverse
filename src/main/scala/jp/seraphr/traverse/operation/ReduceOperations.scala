@@ -7,7 +7,10 @@ import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.data.Product
 import jp.seraphr.traverse.typeclass.Applicative
 
-object OperationsReduce {
+/**
+ * reduceによって、Operationsに定義されているいくつかの処理を再実装
+ */
+object ReduceOperations {
   def reduce[T[_]: CanTraverse, A, M: Monoid](aReducer: A => M)(aData: T[A]): M = {
     import ApplicativeInstances.monoidContainerApplicative
     val tTraversable = implicitly[CanTraverse[T]]

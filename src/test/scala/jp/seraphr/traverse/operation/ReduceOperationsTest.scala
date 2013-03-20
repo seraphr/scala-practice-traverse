@@ -6,14 +6,14 @@ import jp.seraphr.traverse.typeclass.TraversableInstances
 import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.typeclass.Monoid
 
-class OperationsReduceTest extends FunSuite with Checkers {
+class ReduceOperationsTest extends FunSuite with Checkers {
   test("countElements with List") {
     import TraversableInstances.ListTraversable
 
     def testList[T](implicit ev: Arbitrary[List[T]]): Unit = {
       check { (aList: List[T]) =>
         {
-          assert(OperationsReduce.countElements(aList) === aList.size)
+          assert(ReduceOperations.countElements(aList) === aList.size)
           true
         }
       }
@@ -34,7 +34,7 @@ class OperationsReduceTest extends FunSuite with Checkers {
       check { aList: List[T] =>
         {
           val tMonoid = ev2
-          assert(OperationsReduce.appendElements(aList) === aList.fold(ev2.zero)(ev2.append(_, _)))
+          assert(ReduceOperations.appendElements(aList) === aList.fold(ev2.zero)(ev2.append(_, _)))
           true
         }
       }
@@ -54,7 +54,7 @@ class OperationsReduceTest extends FunSuite with Checkers {
       check { aList: List[T] =>
         {
           val tMonoid = ev2
-          val (tCount, tAppend) = OperationsReduce.countAndAppendElements(aList)
+          val (tCount, tAppend) = ReduceOperations.countAndAppendElements(aList)
           assert(tCount === aList.size)
           assert(tAppend === aList.fold(ev2.zero)(ev2.append(_, _)))
           true
