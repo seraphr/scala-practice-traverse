@@ -28,6 +28,7 @@ object ReduceOperations {
 
   def countReducer[A] = (_: A) => 1
   def appendReducer[A] = (a: A) => a
+  def shapeReducer[A] = (_: A) => ()
 
   def countElements[T[_]: CanTraverse, A](aData: T[A]): Int = {
     import MonoidInstances.IntMonoid

@@ -94,6 +94,24 @@ class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
     testList[(String, Int)]
   }
 
+  test("content with List") {
+    import TraversableInstances.ListTraversable
+
+    def testList[T](implicit ev: Arbitrary[List[T]]): Unit = {
+      check { aList: List[T] =>
+        {
+          assert(Operations.content(aList) === aList)
+          true
+        }
+      }
+    }
+
+    testList[String]
+    testList[Int]
+    testList[List[Int]]
+    testList[(String, Int)]
+  }
+
   test("map with List") {
     import TraversableInstances.ListTraversable
 
