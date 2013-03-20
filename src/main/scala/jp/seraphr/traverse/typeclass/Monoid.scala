@@ -32,7 +32,5 @@ object MonoidInstances {
 
       (mMonoid1.append(tLeft1, tRight1), mMonoid2.append(tLeft2, tRight2))
     }
-
   }
-
 }
