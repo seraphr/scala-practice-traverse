@@ -10,7 +10,7 @@ import org.scalacheck.Prop
 import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.typeclass.Monoid
 
-class OperationsTest extends FunSuite with Checkers with ShouldMatchers {
+class OperationsTest extends FunSuite with Checkers {
   test("countElements with List") {
     import TraversableInstances.ListTraversable
 
