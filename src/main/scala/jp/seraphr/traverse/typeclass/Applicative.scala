@@ -18,6 +18,22 @@ trait Applic[F[_]] extends Functor[F] {
 
 trait Applicative[F[_]] extends PointedFunctor[F] with Applic[F]
 
+object Applicative {
+  implicit def AppToUtil[A, B, F[_]: Applicative](f: F[A => B]) = new ApplyUtil(f)
+  implicit def FuncToUtil[A, B, F[_]: Applicative](f: A => B) = new PointApplyUtil(f)
+
+
+  class ApplyUtil[A, B, F[_]: Applicative](f: F[A => B]) {
+    def <*>(aFunctor: F[A]): F[B] = implicitly[Applicative[F]].apply(f)(aFunctor)
+  }
+
+  class PointApplyUtil[A, B, F[_]: Applicative](f: A => B){
+    val tApp = implicitly[Applicative[F]]
+
+    def <|>(aFunctor: F[A]): F[B] = tApp.apply(tApp.point(f))(aFunctor)
+  }
+}
+
 object ApplicativeInstances {
   implicit object ListApplicative extends Applicative[List] {
     override def point[A](a: => A): List[A] = List(a)
@@ -85,5 +101,16 @@ object ApplicativeInstances {
 
       Product(tLeftMapped, tRightMapped)
     }
+  }
+
+  implicit object OptionIsApplicative extends Applicative[Option] {
+    override def point[A](a: => A) = Option(a)
+    override def apply[A, B](f: Option[A => B])(aFunctor: Option[A]): Option[B] = {
+      for {
+        tF <- f
+        tValue <- aFunctor
+      } yield tF(tValue)
+    }
+    override def fmap[A, B](f: A => B)(aFunctor: Option[A]) = aFunctor.map(f)
   }
 }
