@@ -7,6 +7,8 @@ import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.data.Product
 import jp.seraphr.traverse.typeclass.Applicative
 
+import language.higherKinds
+
 /**
  * reduceによって、Operationsに定義されているいくつかの処理を再実装
  */

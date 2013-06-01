@@ -27,4 +27,17 @@ class ApplicativeUtilTest extends FunSuite {
     assert(tResult === Some("30"))
     assert(tF <|> tArg <*> None === None)
   }
+
+  test("test with Option and Function3") {
+    import jp.seraphr.traverse.typeclass.ApplicativeInstances._
+    import jp.seraphr.traverse.typeclass.Applicative._
+
+    val tF = (a: Int) => (b: Int) => (c: String) => (a + b).toString + c
+    val tArg: Option[Int] = Some(10)
+
+    val tResult = tF <|> tArg <*> Option(20) <*> Some("yen")
+
+    assert(tResult === Some("30yen"))
+    assert(tF <|> tArg <*> None === None)
+  }
 }

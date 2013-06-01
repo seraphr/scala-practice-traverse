@@ -4,6 +4,8 @@ import jp.seraphr.traverse.data.Container
 import jp.seraphr.traverse.data.Ident
 import jp.seraphr.traverse.data.Product
 
+import language.higherKinds
+
 trait Functor[F[_]] {
   def fmap[A, B](f: A => B)(aFunctor: F[A]): F[B]
 }
@@ -19,15 +21,11 @@ trait Applic[F[_]] extends Functor[F] {
 trait Applicative[F[_]] extends PointedFunctor[F] with Applic[F]
 
 object Applicative {
-  implicit def AppToUtil[A, B, F[_]: Applicative](f: F[A => B]) = new ApplyUtil(f)
-  implicit def FuncToUtil[A, B, F[_]: Applicative](f: A => B) = new PointApplyUtil(f)
-
-
-  class ApplyUtil[A, B, F[_]: Applicative](f: F[A => B]) {
+  implicit class ApplyUtil[A, B, F[_]: Applicative](f: F[A => B]) {
     def <*>(aFunctor: F[A]): F[B] = implicitly[Applicative[F]].apply(f)(aFunctor)
   }
 
-  class PointApplyUtil[A, B, F[_]: Applicative](f: A => B){
+  implicit class PointApplyUtil[A, B, F[_]: Applicative](f: A => B){
     val tApp = implicitly[Applicative[F]]
 
     def <|>(aFunctor: F[A]): F[B] = tApp.apply(tApp.point(f))(aFunctor)

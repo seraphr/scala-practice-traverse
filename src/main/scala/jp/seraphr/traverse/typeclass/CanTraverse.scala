@@ -1,5 +1,7 @@
 package jp.seraphr.traverse.typeclass
 
+import language.higherKinds
+
 trait CanTraverse[T[_]] {
   def traverse[F[_]: Applicative, A, B](f: A => F[B])(aTraversable: T[A]): F[T[B]]
 }

@@ -9,7 +9,8 @@ import jp.seraphr.traverse.typeclass.MonoidInstances
 import jp.seraphr.traverse.typeclass.Monoid
 import jp.seraphr.traverse.data.Ident
 import jp.seraphr.traverse.data.Product
-import jp.seraphr.traverse.data.Product
+
+import language.higherKinds
 
 object Operations {
   def traverse[T[_]: CanTraverse, F1[_]: Applicative, A, B](aFunc1: A => F1[B])(aData: T[A]): F1[T[B]] = {
